@@ -105,9 +105,9 @@ def depthFirstSearch(problem: SearchProblem):
             return curNode.path
         if curNode.state not in closed:
             closed.add(curNode.state)
-            for childNode in problem.getSuccessors(curNode.state):
-                childNode = Node(childNode[0], childNode[1], childNode[2])
-                childNode.path = curNode.path.append(childNode.path)
+            for item in problem.getSuccessors(curNode.state):
+                childNode = Node(item[0], item[1], item[2])
+                childNode.path = curNode.path + [childNode.path]
                 fringe.push(childNode)
 
     return list()
@@ -132,6 +132,25 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    closed = set()
+    fringe = util.PriorityQueue()
+    startNode = Node(problem.getStartState(), [], 0)
+    fringe.push(startNode, startNode.cost + heuristic(startNode.state, problem))
+
+    while not fringe.isEmpty():
+        curNode = fringe.pop()
+        print(curNode.state, curNode.cost + heuristic(curNode.state, problem))
+        if problem.isGoalState(curNode.state):
+            return curNode.path
+        if curNode.state not in closed:
+            closed.add(curNode.state)
+            for item in problem.getSuccessors(curNode.state):
+                childNode = Node(item[0], item[1], item[2])
+                childNode.path = curNode.path + [childNode.path]
+                childNode.cost = curNode.cost + childNode.cost
+                fringe.push(childNode, childNode.cost + heuristic(startNode.state, problem))
+
+    return list()
     util.raiseNotDefined()
 
 
