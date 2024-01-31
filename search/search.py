@@ -73,10 +73,11 @@ def tinyMazeSearch(problem):
     return  [s, s, w, s, w, w, s, w]
 
 class Node:
-    def __init__(self, state: any, path: list, cost: int):
+    def __init__(self, state: any, path: list, cost: int = 0, heuristic: int = 0):
         self.state = state
         self.path = path
         self.cost = cost
+        self.heuristic = heuristic
 
 
 def depthFirstSearch(problem: SearchProblem):
@@ -106,7 +107,7 @@ def depthFirstSearch(problem: SearchProblem):
         if curNode.state not in closed:
             closed.add(curNode.state)
             for item in problem.getSuccessors(curNode.state):
-                childNode = Node(item[0], item[1], item[2])
+                childNode = Node(item[0], item[1])
                 childNode.path = curNode.path + [childNode.path]
                 fringe.push(childNode)
 
@@ -134,12 +135,11 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     "*** YOUR CODE HERE ***"
     closed = set()
     fringe = util.PriorityQueue()
-    startNode = Node(problem.getStartState(), [], 0)
-    fringe.push(startNode, startNode.cost + heuristic(startNode.state, problem))
+    startNode = Node(problem.getStartState(), [], 0, heuristic(problem.getStartState(), problem))
+    fringe.push(startNode, startNode.cost + startNode.heuristic)
 
     while not fringe.isEmpty():
         curNode = fringe.pop()
-        print(curNode.state, curNode.cost + heuristic(curNode.state, problem))
         if problem.isGoalState(curNode.state):
             return curNode.path
         if curNode.state not in closed:
@@ -148,11 +148,10 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
                 childNode = Node(item[0], item[1], item[2])
                 childNode.path = curNode.path + [childNode.path]
                 childNode.cost = curNode.cost + childNode.cost
-                fringe.push(childNode, childNode.cost + heuristic(startNode.state, problem))
+                childNode.heuristic = heuristic(childNode.state, problem)
+                fringe.push(childNode, childNode.cost + childNode.heuristic)
 
     return list()
-    util.raiseNotDefined()
-
 
 # Abbreviations
 bfs = breadthFirstSearch
