@@ -116,12 +116,43 @@ def depthFirstSearch(problem: SearchProblem):
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = set()
+    fringe = util.Queue()
+    startState = Node(problem.getStartState(), [], 0)
+    fringe.push(startState)
+
+    while not fringe.isEmpty():
+        currNode = fringe.pop()
+        if problem.isGoalState(currNode.state):
+            return currNode.path
+        if currNode.state not in closed:
+            closed.add(currNode.state)
+            for item in problem.getSuccessors(currNode.state):
+                childNode = Node(item[0], item[1], item[2])
+                childNode.path = currNode.path + [childNode.path]
+                fringe.push(childNode)
+    return list()
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = set()
+    fringe = util.PriorityQueue()
+    startState = Node(problem.getStartState(), [], 0)
+    fringe.push(startState, 0)
+
+    while not fringe.isEmpty():
+        currNode = fringe.pop()
+        if problem.isGoalState(currNode.state):
+            return currNode.path
+        if currNode.state not in closed:
+            closed.add(currNode.state)
+            for item in problem.getSuccessors(currNode.state):
+                childNode = Node(item[0], item[1], item[2]) #cost is not added
+                childNode.path = currNode.path + [childNode.path]
+                childNode.cost += currNode.cost 
+                fringe.push(childNode, childNode.cost)
+    return list()
 
 def nullHeuristic(state, problem=None):
     """
