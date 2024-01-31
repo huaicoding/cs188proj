@@ -361,7 +361,15 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    from util import manhattanDistance
+    pos = state[0]
+    visited_corners = state[1]
+    max_dist = 0
+    for corner in corners:
+        if corner not in visited_corners:
+            max_dist = max(max_dist, manhattanDistance(pos,corner))
+
+    return max_dist # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -425,6 +433,10 @@ class AStarFoodSearchAgent(SearchAgent):
         self.searchFunction = lambda prob: search.aStarSearch(prob, foodHeuristic)
         self.searchType = FoodSearchProblem
 
+import math
+def realDistance(xy1, xy2):
+    return math.sqrt((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2)
+
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -455,7 +467,32 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    from util import manhattanDistance
+    walls = problem.walls.asList()
+    foods = foodGrid.asList()
+
+    temp = 0
+    dist = 0
+    far_p1 = (0, 0)
+    far_p2 = (0, 0)
+    for food1 in foods:
+        for food2 in foods:
+            if food1 != food2:
+                temp = manhattanDistance(food1, food2)
+                if (temp > dist):
+                    far_p1 = food1
+                    far_p2 = food2
+                    dist = temp
+
+    heur = 0
+    if far_p1 != far_p2:
+        d1 = manhattanDistance(position, far_p1)
+        d2 = manhattanDistance(position, far_p2)
+        heur = dist + min(d1, d2)
+    elif len(foods) == 1:
+        heur = manhattanDistance(position, foods[0])
+
+    return heur
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
