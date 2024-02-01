@@ -296,7 +296,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return (self.startingPosition, {})
+        return (self.startingPosition, ())
 
     def isGoalState(self, state: Any):
         """
@@ -334,7 +334,7 @@ class CornersProblem(search.SearchProblem):
             if not hitWall:
                 newPosition = (nextx, nexty)
                 if newPosition in self.corners and newPosition not in state[1]:
-                    newState = (newPosition, state[1].add(newPosition))
+                    newState = (newPosition, (state[1] + (newPosition, )))
                 else:
                     newState = (newPosition, state[1])
                 successors.append((newState, action, 1))
