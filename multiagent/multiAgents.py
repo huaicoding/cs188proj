@@ -86,29 +86,19 @@ class ReflexAgent(Agent):
                     nearest_food = dist
 
         nearest_ghost = 9999
-        nearest_ghost_scared = 9999
         for ghost in newGhostStates:
             dist = manhattanDistance(ghost.getPosition(), newPos)
             scared = ghost.scaredTimer
-            if (not scared) and (dist < nearest_ghost):
+            if (scared == 0) and (dist < nearest_ghost):
                 nearest_ghost = dist
-            elif scared and (dist < nearest_ghost_scared):
-                nearest_ghost_scared = dist
+
 
         if nearest_ghost == 0:
-            return -1
-        elif nearest_ghost_scared == 0:
-            return 2
+            return successorGameState.getScore() - 1
         elif nearest_food == 0:
-            return 1
-        # elif nearest_ghost == -1:
-        #     value = 1 / nearest_food + 1 / nearest_ghost_scared
-        # elif nearest_ghost_scared == -1:
-        #     value = 1 / nearest_food - 1 / nearest_ghost
-        # else:
-        #     value = 1 / nearest_food + 1 / nearest_ghost_scared - 1 / nearest_ghost
+            return successorGameState.getScore() + 1
 
-        return 1 / nearest_food - 1 / nearest_ghost
+        return successorGameState.getScore() + 10 / nearest_food - 10 / nearest_ghost
 
 def scoreEvaluationFunction(currentGameState: GameState):
     """
