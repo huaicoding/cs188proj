@@ -335,34 +335,54 @@ def betterEvaluationFunction(currentGameState: GameState):
     evaluation function (question 5).
 
     DESCRIPTION: <write something here so we know what you did>
+    If the current game status is win or lose, the function will return the overall score
+    The game will consider states relavent to distance with the ghost, capsules and remaining
+    food.
+    - If the Pacman is too close to the ghost, the reward will decline depends on the distance
+    - Threshold is set at 0, 1 and other distance when scared time of ghost is less than 2
+    - Pacman will get incentive if it is enough close to eat the capsules
+    - Pacman will get incentive when it gets enough close to food so that it can take all the food
+      gradualy. We expect fewer food is left in the maze.
     """
     "*** YOUR CODE HERE ***"
 
     newPos = currentGameState.getPacmanPosition()
     newFood = currentGameState.getFood()
+    newCapsules = currentGameState.getCapsules()
     newGhostStates = currentGameState.getGhostStates()
-    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
     currentFood = newFood.asList()
-    score = float(0)
+    score = currentGameState.getScore()
 
-    #eat ghost or run away?
-    dist_to_ghosts = list()
+    if currentGameState.isWin() or currentGameState.isLose():
+        return currentGameState.getScore()
+
+    #distance to ghost?
     for ghost in newGhostStates:
         dist = manhattanDistance(ghost.getPosition(), newPos)
         scaredTime = ghost.scaredTimer
-        if dist < scaredTime:
-            score += 200 * dist
-        dist_to_ghosts.append(dist)
-    score += min(dist_to_ghosts)
-            
+        if scaredTime < 2:
+            if dist == 0:
+                score -= 10000
+            if dist == 1:
+                score -= 300
+            else:
+                score += 10 / dist
+        else:
+            score += 0
+
+    #distance to capsule?
+    for capsule in newCapsules:
+        dist = manhattanDistance(capsule, newPos)
+        if dist <= 2:
+            score += 200
+      
     #distance to food?
     dist_to_food = list()
     for food in currentFood:
         dist = manhattanDistance(food, newPos)
         dist_to_food.append(dist)
-    if len(dist_to_food) > 0:
-        score -= max(dist_to_food)
-
+        score += 1 / (dist ** 2)
+    
     return score
 
 # Abbreviation
