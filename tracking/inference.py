@@ -61,7 +61,43 @@ def constructBayesNet(gameState: hunters.GameState):
     variableDomainsDict = {}
 
     "*** YOUR CODE HERE ***"
-    raiseNotDefined()
+    variables.append(PAC)
+    variables.append(GHOST0)
+    variables.append(GHOST1)
+    variables.append(OBS0)
+    variables.append(OBS1)
+    edges.append((GHOST0, OBS0))
+    edges.append((PAC, OBS0))
+    edges.append((PAC, OBS1))
+    edges.append((GHOST1, OBS1))
+    variableDomainsDict[PAC] = []
+    for x in range(X_RANGE):
+        for y in range(Y_RANGE):
+            variableDomainsDict[PAC].append((x, y))
+    variableDomainsDict[GHOST0] = []
+    for x in range(X_RANGE):
+        for y in range(Y_RANGE):
+            variableDomainsDict[GHOST0].append((x, y))
+    variableDomainsDict[GHOST1] = []
+    for x in range(X_RANGE):
+        for y in range(Y_RANGE):
+            variableDomainsDict[GHOST1].append((x, y))
+    variableDomainsDict[OBS0] = []
+    for posx in variableDomainsDict[PAC]:
+        for posy in variableDomainsDict[GHOST0]:
+            manh = manhattanDistance(posx, posy)
+            for obsv in range(max(0, manh - MAX_NOISE), manh + MAX_NOISE + 1):
+                if obsv not in variableDomainsDict[OBS0]:
+                    variableDomainsDict[OBS0].append(obsv)
+    variableDomainsDict[OBS1] = []
+    for posx in variableDomainsDict[PAC]:
+        for posy in variableDomainsDict[GHOST1]:
+            manh = manhattanDistance(posx, posy)
+            for obsv in range(max(0, manh - MAX_NOISE), manh + MAX_NOISE + 1):
+                if obsv not in variableDomainsDict[OBS1]:
+                    variableDomainsDict[OBS1].append(obsv)
+    #variableDomainsDict[OBS0] = [dis for dis in range (manhattanDistance(PAC, GHOST0) - MAX_NOISE, manhattanDistance(PAC, GHOST0), + MAX_NOISE)]
+    #variableDomainsDict[OBS1] = [dis for dis in range (manhattanDistance(PAC, GHOST1) - MAX_NOISE, manhattanDistance(PAC, GHOST1), + MAX_NOISE)]
     "*** END YOUR CODE HERE ***"
 
     net = bn.constructEmptyBayesNet(variables, edges, variableDomainsDict)
