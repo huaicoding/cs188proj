@@ -126,7 +126,6 @@ def joinFactors(factors: List[Factor]):
 ########### ########### ###########
 
 def eliminateWithCallTracking(callTrackingList=None):
-
     def eliminate(factor: Factor, eliminationVariable: str):
         """
         Input factor is a single factor.
@@ -169,9 +168,18 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
         "*** YOUR CODE HERE ***"
-        
+        reducedUnconditionedVariablesSet = factor.unconditionedVariables()
+        reducedUnconditionedVariablesSet.remove(eliminationVariable)
+        eliminatedFactor = Factor(reducedUnconditionedVariablesSet, factor.conditionedVariables(), factor.variableDomainsDict())
+        for eliminatedAssignment in eliminatedFactor.getAllPossibleAssignmentDicts():
+            sum = 0
+            for elimValue in factor.variableDomainsDict()[eliminationVariable]:
+                fianlAssignment = eliminatedAssignment
+                fianlAssignment[eliminationVariable] = elimValue
+                sum += factor.getProbability(fianlAssignment)
+            eliminatedFactor.setProbability(eliminatedAssignment, sum)
+        return eliminatedFactor
         "*** END YOUR CODE HERE ***"
-
     return eliminate
 
 eliminate = eliminateWithCallTracking()
