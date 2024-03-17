@@ -96,8 +96,6 @@ def constructBayesNet(gameState: hunters.GameState):
             for obsv in range(max(0, manh - MAX_NOISE), manh + MAX_NOISE + 1):
                 if obsv not in variableDomainsDict[OBS1]:
                     variableDomainsDict[OBS1].append(obsv)
-    #variableDomainsDict[OBS0] = [dis for dis in range (manhattanDistance(PAC, GHOST0) - MAX_NOISE, manhattanDistance(PAC, GHOST0), + MAX_NOISE)]
-    #variableDomainsDict[OBS1] = [dis for dis in range (manhattanDistance(PAC, GHOST1) - MAX_NOISE, manhattanDistance(PAC, GHOST1), + MAX_NOISE)]
     "*** END YOUR CODE HERE ***"
 
     net = bn.constructEmptyBayesNet(variables, edges, variableDomainsDict)
@@ -218,7 +216,14 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             eliminationOrder = sorted(list(eliminationVariables))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        factorList = bayesNet.getAllCPTsWithEvidence(evidenceDict)
+        for eliminationVar in eliminationOrder:
+            factorList, joinedFactors = joinFactorsByVariable(factorList, eliminationVar)
+            if len(joinedFactors.unconditionedVariables()) > 1:
+                eliminateFator = eliminate(joinedFactors, eliminationVar)
+                factorList.append(eliminateFator)
+        return normalize(joinFactors(factorList))
+
         "*** END YOUR CODE HERE ***"
 
 
