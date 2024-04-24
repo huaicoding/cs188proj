@@ -48,7 +48,7 @@ class QLearningAgent(ReinforcementAgent):
         ReinforcementAgent.__init__(self, **args)
 
         "*** YOUR CODE HERE ***"
-        self.qVals = util.Counter
+        self.qVals = util.Counter()
         self.eval = False
 
     def getQValue(self, state, action):
@@ -71,7 +71,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         max_Q = 0
-        legalActions = self.getLegalActions()
+        legalActions = self.getLegalActions(state)
 
         if legalActions:
             max_Q = float('-inf')
